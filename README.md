@@ -1,21 +1,59 @@
 # Edge Incident Response Agent
 
-> Autonomous AI agent that detects, investigates & resolves API incidents at the edge. Zero servers. Global scale.
+> Autonomous AI agent that detects, investigates & resolves API incidents at the edge.
 
-## Problem
+## Project Description
 
-When APIs fail, engineers spend 15–30 minutes manually correlating logs and writing incident reports. Existing tools alert you — but they don't investigate for you.
+A stateful AI agent that monitors your APIs in real-time, detects anomalies, autonomously investigates them (by browsing logs and querying databases), and alerts humans — all running at the edge with zero servers.
 
-## Solution
+This project is built as an end-to-end incident response system on Cloudflare:
+- Ingress monitoring + anomaly detection at the edge
+- Stateful AI investigation using Durable Objects + Agents SDK
+- Retrieval-augmented context from historical incidents
+- Automated incident summary generation in under 60 seconds
+- Live incident feed in a React dashboard over WebSocket
 
-An autonomous AI agent running entirely on Cloudflare's edge that:
-- Detects API anomalies in real-time (< 30 seconds)
-- Spawns a stateful AI investigator per incident
-- Queries logs, searches past incidents, reasons with LLM
-- Produces a full incident report in under 60 seconds
-- Streams live updates to a dashboard via WebSocket
+## The Problem Statement
 
-**Zero centralized servers. Deploys globally in one command.**
+When an API goes down or gets attacked, engineers spend 15–30 minutes manually correlating logs, checking dashboards, and writing incident reports. This is slow, expensive, and error-prone. Current monitoring tools (Datadog, PagerDuty) alert you — but they don't investigate for you.
+
+This project solves that gap with an autonomous edge agent that detects, investigates, and summarizes incidents in under 60 seconds — without a single centralized server.
+
+## High-Level Architecture
+
+```text
+API Traffic → Workers (Ingress Monitor)
+↓ anomaly detected
+Agents SDK + Durable Objects (IncidentAgent)
+↓ investigation tools
+┌───────────┼───────────┬───────────┐
+D1          Vectorize   Workers AI   KV
+(logs)       (RAG)      (Llama 3.1) (config)
+↓ report written
+WebSocket → CF Pages Dashboard
+```
+
+```text
+                    ┌─────────────────────────────────┐
+                    │        Cloudflare Edge          │
+                    │                                 │
+  API Traffic ─────▶│  [Worker] Ingress Monitor       │
+                    │       ↓ anomaly detected        │
+                    │  [Agents SDK + Durable Object]  │◀── WebSocket (live UI)
+                    │    IncidentAgent                │
+                    │       ↓ spawns tasks            │
+                    │  ┌────┴──────────────────────┐  │
+                    │  │ Tool 1: Query D1 logs     │  │
+                    │  │ Tool 2: Vectorize (RAG)   │  │
+                    │  │ Tool 3: Workers AI LLM    │  │
+                    │  └───────────────────────────-┘  │
+                    │       ↓ writes summary           │
+                    │  [D1] incidents table            │
+                    └──────────────────────────────────┘
+                              ↓
+                    [CF Pages] React Dashboard
+                    (live incident feed via WebSocket)
+```
 
 ## Cloudflare Services
 
@@ -25,7 +63,6 @@ An autonomous AI agent running entirely on Cloudflare's edge that:
 | Agents SDK | Stateful IncidentAgent orchestration |
 | Durable Objects | Per-incident state and memory |
 | Workers AI | LLM inference (Llama 3.1 8B) |
-| AI Gateway | LLM observability, caching, rate limiting |
 | D1 | Request logs and incident records |
 | Vectorize | Semantic search over past incidents (RAG) |
 | KV | Config, blocklist, incident report storage |
@@ -89,7 +126,7 @@ wrangler vectorize create incident-vectors \
 3. Durable Object instantiates at nearest Cloudflare PoP
 4. Agent queries D1 for recent error logs (Phase A)
 5. Agent searches Vectorize for similar past incidents (Phase B)
-6. Agent calls Workers AI via AI Gateway for root cause analysis (Phase C)
+6. Agent calls Workers AI for root cause analysis (Phase C)
 7. Report written to D1, embedding stored in Vectorize (Phase D)
 8. WebSocket broadcasts each step to live dashboard
 9. Full investigation completes in under 60 seconds
