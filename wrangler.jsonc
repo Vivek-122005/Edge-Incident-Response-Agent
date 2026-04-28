@@ -1,0 +1,66 @@
+{
+	"name": "incident-response-agent",
+	"main": "src/server.ts",
+	"compatibility_date": "2025-02-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "IncidentAgent",
+				"class_name": "IncidentAgent"
+			}
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "incident-db",
+			"database_id": "8466c3af-51c9-4cd7-b62d-b281adfddf18"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "incident_kv",
+			"id": "fd935dae468c40538f6b65a79ffbe821"
+		}
+	],
+	"vectorize": [
+		{
+			"binding": "VECTORIZE",
+			"index_name": "incident-vectors"
+		}
+	],
+	"ai": {
+		"binding": "AI",
+		"experimental_remote_inference": true
+	},
+	"vars": {
+		"CF_ACCOUNT_ID": "0243205cab7dcdf2b0f7b6f7d7605f6d",
+		"INCIDENT_DEBOUNCE_MS": "15000"
+	},
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"persist": true,
+			"invocation_logs": true
+		},
+		"traces": {
+			"enabled": true,
+			"persist": true,
+			"head_sampling_rate": 1
+		}
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": [
+				"IncidentAgent"
+			]
+		}
+	]
+}

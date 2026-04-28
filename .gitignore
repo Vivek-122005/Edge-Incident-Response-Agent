@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Wrangler
+.wrangler/
+.dev.vars
+.dev.vars.example
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+wrangler-*.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Local planning docs (do not commit)
+agent_guide.md
+project.md
