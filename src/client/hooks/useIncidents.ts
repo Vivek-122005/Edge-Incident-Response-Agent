@@ -5,6 +5,8 @@ const WORKER_URL = import.meta.env.DEV
   ? ''
   : 'https://incident-response-agent.vivek-23csai.workers.dev';
 
+console.log('DEBUG: useIncidents WORKER_URL=', WORKER_URL);
+
 export function useIncidents(pollIntervalMs = 3000) {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,14 +17,18 @@ export function useIncidents(pollIntervalMs = 3000) {
 
     async function fetchIncidents() {
       try {
-        const res = await fetch(`${WORKER_URL}/incidents`);
+        const url = `${WORKER_URL}/incidents`;
+        console.log('DEBUG: Fetching incidents from', url);
+        const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json() as Incident[];
+        console.log('DEBUG: Received incidents', data.length);
         if (mounted) {
           setIncidents(data);
           setError(null);
         }
       } catch (err) {
+        console.error('DEBUG: Fetch error', err);
         if (mounted) {
           setError(err instanceof Error ? err.message : 'Unknown error');
         }

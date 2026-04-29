@@ -34,28 +34,18 @@ export function HeroBanner() {
         </div>
 
         {/* Right: services used pills */}
-        <div style={{ flexShrink: 0 }}>
-          <div style={{ fontSize: 11, color: '#9ca3af',
-            marginBottom: 6, textTransform: 'uppercase',
-            letterSpacing: '0.06em' }}>
-            Powered by
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap',
-            gap: 6, maxWidth: 320 }}>
-            {[
-              'Workers', 'Agents SDK', 'Durable Objects',
-              'Workers AI', 'AI Gateway', 'D1', 'Vectorize',
-              'KV', 'Pages'
-            ].map(s => (
-              <span key={s} style={{
-                fontSize: 11, color: '#374151',
-                background: '#f3f4f6',
-                border: '1px solid #e5e7eb',
-                padding: '3px 8px', borderRadius: 4,
-                fontWeight: 500,
-              }}>
-                {s}
-              </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af',
+            textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            uses
+          </span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end', maxWidth: 300 }}>
+            {['Workers', 'Agents SDK', 'Durable Objects', 'Workers AI', 'AI Gateway', 'D1', 'Vectorize', 'KV', 'Pages'].map(tag => (
+              <span key={tag} style={{
+                fontSize: 11, background: '#f3f4f6', color: '#4b5563',
+                padding: '4px 8px', borderRadius: 4, fontWeight: 500,
+                border: '1px solid #e5e7eb'
+              }}>{tag}</span>
             ))}
           </div>
         </div>

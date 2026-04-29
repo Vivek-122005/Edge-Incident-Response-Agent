@@ -1,0 +1,46 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mFailed to write to log file Error: EPERM: operation not permitted, open '/Users/vivekvishnoi/Library/Preferences/.wrangler/logs/wrangler-2026-04-29_09-44-20_450.log'[0m
+
+      at async open (node:internal/fs/promises:642:25)
+      at async writeFile (node:internal/fs/promises:1249:14)
+      at async /Users/vivekvishnoi/Edge-Incident-Response-Agent/node_modules/wrangler/wrangler-dist/cli.js:48696:7
+      at async Mutex.runWith (/Users/vivekvishnoi/Edge-Incident-Response-Agent/node_modules/miniflare/dist/src/index.js:57205:48)
+      at async appendToDebugLogFile (/Users/vivekvishnoi/Edge-Incident-Response-Agent/node_modules/wrangler/wrangler-dist/cli.js:48693:3) {
+    errno: -1,
+    code: 'EPERM',
+    syscall: 'open',
+    path: '/Users/vivekvishnoi/Library/Preferences/.wrangler/logs/wrangler-2026-04-29_09-44-20_450.log'
+  }
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mWould have written: [0m
+
+  --- 2026-04-29T09:44:20.628Z debug
+  🪵  Writing logs to "/Users/vivekvishnoi/Library/Preferences/.wrangler/logs/wrangler-2026-04-29_09-44-20_450.log"
+  ---
+  
+
+
+
+ ⛅️ wrangler 4.85.0 (update available 4.86.0)
+─────────────────────────────────────────────
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+Total Upload: 1840.37 KiB / gzip: 313.88 KiB
+Your Worker has access to the following bindings:
+Binding                                                            Resource                  
+env.IncidentAgent (IncidentAgent)                                  Durable Object            
+env.incident_kv (fd935dae468c40538f6b65a79ffbe821)                 KV Namespace              
+env.DB (incident-db)                                               D1 Database               
+env.VECTORIZE (incident-vectors)                                   Vectorize Index           
+env.AI                                                             AI                        
+env.CF_ACCOUNT_ID ("0243205cab7dcdf2b0f7b6f7d7605f6d")             Environment Variable      
+env.INCIDENT_DEBOUNCE_MS ("15000")                                 Environment Variable      
+
+--dry-run: exiting now.
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+🪵  Logs were written to "/Users/vivekvishnoi/Library/Preferences/.wrangler/logs/wrangler-2026-04-29_09-44-20_450.log"

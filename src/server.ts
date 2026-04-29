@@ -1,9 +1,32 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { routeAgentRequest } from "agents";
 import { Env } from "./types";
 
 const app = new Hono<{ Bindings: Env }>();
 let lastIncidentTriggered = 0;
+
+function isAllowedOrigin(origin?: string | null): boolean {
+  if (!origin) return false;
+  if (origin === "http://localhost:5173" || origin === "http://localhost:5174") return true;
+
+  try {
+    const host = new URL(origin).hostname;
+    return host.endsWith(".pages.dev");
+  } catch {
+    return false;
+  }
+}
+
+app.use(
+  "*",
+  cors({
+    origin: (origin) => (isAllowedOrigin(origin) ? origin : ""),
+    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    maxAge: 86400
+  })
+);
 
 function getIncidentDebounceMs(env: Env): number {
   const parsed = Number(env.INCIDENT_DEBOUNCE_MS ?? "60000");
@@ -50,7 +73,7 @@ async function triggerIncident(env: Env, path: string): Promise<void> {
     expirationTtl: 300
   });
 
-  const id = env.IncidentAgent.idFromName("live");
+  const id = env.IncidentAgent.idFromName("global");
   try {
     const stub = env.IncidentAgent.get(id);
     await stub.fetch("http://agent/start", {
@@ -191,7 +214,19 @@ export { IncidentAgent } from "./agent";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    const agentResponse = await routeAgentRequest(request, env);
+    // `agents`/`partyserver` match URL namespaces using kebab-case derived from
+    // env binding keys (e.g. `IncidentAgent` -> `incident-agent`).
+    // The live feed client requests `/agents/IncidentAgent/...`, so rewrite.
+    let agentRequest: Request = request;
+    const url = new URL(request.url);
+    if (url.pathname.startsWith("/agents/IncidentAgent/")) {
+      url.pathname = url.pathname.replace("/agents/IncidentAgent/", "/agents/incident-agent/");
+      // Re-create the request with the rewritten URL while keeping the original
+      // request object intact for WebSocket upgrade headers.
+      agentRequest = new Request(url.toString(), request as any);
+    }
+
+    const agentResponse = await routeAgentRequest(agentRequest, env);
     if (agentResponse) return agentResponse;
 
     return app.fetch(request, env, ctx);
